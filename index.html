@@ -1,0 +1,809 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Wiki Temporal Marvel</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Bangers&family=Barlow:wght@400;500;600;700&family=Bebas+Neue&family=Cinzel:wght@600;800&family=Orbitron:wght@600;800&family=Permanent+Marker&family=Special+Elite&display=swap">
+<style>
+/* Concepto: una sola línea de tiempo vertical; cada etapa es una banda con su propio mundo visual (color, tipografía y trama). */
+:root{
+  --bg:#09090d; --panel:#13131a; --panel2:#1c1c26; --ink:#f3efe7; --mute:#a7a3b3; --line:#2b2b38;
+  --red:#e8322f; --ok:#3ddc84;
+  --fd:'Bebas Neue',Impact,'Arial Narrow',sans-serif;
+  --fb:'Barlow',system-ui,-apple-system,'Segoe UI',sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:15px;line-height:1.45;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:0 40px;
+}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:#0d0d13;z-index:60}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.wrap{max-width:1440px;margin:0 auto}
+
+/* Header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:#0d0d13;border-bottom:1px solid var(--line);margin-inline:calc(-1*max(16px,env(safe-area-inset-left,0px))) calc(-1*max(16px,env(safe-area-inset-right,0px)));padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px))}
+.top-in{max-width:1440px;margin:0 auto;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.logo{width:56px;height:56px;border:1px dashed #5a5a6c;background:#17171f;display:grid;place-items:center;padding:0;overflow:hidden;flex:none}
+.logo img{width:100%;height:100%;object-fit:contain}
+.logo svg{width:30px;height:30px}
+.bt{font-family:var(--fd);font-size:30px;letter-spacing:.06em;line-height:1;margin:0;white-space:nowrap}
+.bs{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-left:auto;min-width:0}
+.tools input[type=search]{background:var(--panel);border:1px solid var(--line);padding:8px 12px;min-width:0;width:200px}
+.tools select{background:var(--panel);border:1px solid var(--line);padding:8px;max-width:210px}
+.btn{background:var(--panel2);border:1px solid var(--line);padding:8px 14px;font-weight:600;letter-spacing:.03em}
+.btn:hover{border-color:#6a6a80}
+.btn.red{background:var(--red);border-color:var(--red);color:#fff}
+.btn.sm{padding:5px 10px;font-size:12px}
+.btn[aria-pressed=true]{background:#fff;color:#000}
+.who{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--mute)}
+.who b{color:var(--ink)}
+
+/* Hero */
+.hero{padding:30px 0 20px;display:grid;gap:14px}
+.hero h1{font-family:var(--fd);font-size:clamp(44px,9vw,104px);line-height:.92;letter-spacing:.02em;margin:0;text-wrap:balance;max-width:14ch}
+.hero h1 em{font-style:normal;color:var(--red)}
+.hero p{max-width:62ch;color:var(--mute);margin:0;font-size:16px}
+.meter{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.bar{flex:1 1 260px;height:10px;background:var(--panel2);position:relative;overflow:hidden}
+.bar i{position:absolute;inset:0 auto 0 0;width:0;background:linear-gradient(90deg,var(--red),#ff9f1c);transition:width .4s}
+.meter span{font-variant-numeric:tabular-nums;font-weight:600}
+
+/* Layout */
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:28px;align-items:start}
+.rail{display:none}
+@media(min-width:1100px){
+  .layout{grid-template-columns:240px minmax(0,1fr)}
+  .rail{display:block;position:sticky;top:calc(env(safe-area-inset-top,0px) + 90px);max-height:calc(100vh - 110px);overflow:auto;padding-right:6px;font-size:13px}
+  .jump{display:none}
+}
+.rail a{display:flex;gap:8px;align-items:center;padding:5px 8px;color:var(--mute);text-decoration:none;border-left:3px solid transparent;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.rail a:hover{color:var(--ink);background:var(--panel)}
+.rail a i{width:9px;height:9px;flex:none;border-radius:50%}
+.rail .rg{margin:14px 0 4px;padding:0 8px;font-family:var(--fd);letter-spacing:.1em;font-size:16px;color:var(--ink)}
+.rail .rs{display:block;overflow:hidden;text-overflow:ellipsis}
+
+/* Group banners */
+.group{margin:46px 0 14px;padding:26px 22px;background:linear-gradient(120deg,#2a0a0c,#0c0c12 70%);border:1px solid var(--line);scroll-margin-top:110px;display:flex;gap:14px;align-items:baseline;flex-wrap:wrap}
+.group h2{margin:0;font-family:var(--fd);font-size:clamp(32px,6vw,60px);letter-spacing:.06em;line-height:1}
+.group small{color:var(--mute);letter-spacing:.14em;text-transform:uppercase;font-size:11px}
+
+/* Section bands */
+.sec{margin:0 0 22px;padding:0 0 18px;background:var(--pat),linear-gradient(165deg,var(--a),var(--b) 75%);border:1px solid color-mix(in srgb,var(--ac) 30%,#000);scroll-margin-top:110px}
+.sh{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;padding:20px 20px 14px}
+.sh .em{font-size:26px}
+.sh h2{margin:0;font-family:var(--fd-s);font-size:clamp(28px,5vw,50px);line-height:1;letter-spacing:.04em;color:var(--ac);font-weight:400;text-wrap:balance}
+.sh .sub{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:color-mix(in srgb,var(--ink) 70%,transparent)}
+.sh .cnt{margin-left:auto;font-variant-numeric:tabular-nums;font-weight:700;border:1px solid var(--ac);color:var(--ac);padding:2px 10px;font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,235px),1fr));gap:14px;padding:0 20px}
+@media(max-width:520px){.sh{padding:16px 14px 10px}.grid{padding:0 14px}}
+
+/* Pattern presets */
+.pat-dots{--pat:radial-gradient(color-mix(in srgb,var(--ac) 26%,transparent) 1.3px,transparent 1.8px) 0 0/11px 11px}
+.pat-rays{--pat:repeating-conic-gradient(from 0deg at 50% 130%,color-mix(in srgb,var(--ac) 14%,transparent) 0 4deg,transparent 4deg 12deg)}
+.pat-grid{--pat:linear-gradient(color-mix(in srgb,var(--ac) 11%,transparent) 1px,transparent 1px) 0 0/24px 24px,linear-gradient(90deg,color-mix(in srgb,var(--ac) 11%,transparent) 1px,transparent 1px) 0 0/24px 24px}
+.pat-stripes{--pat:repeating-linear-gradient(135deg,color-mix(in srgb,var(--ac) 13%,transparent) 0 6px,transparent 6px 18px)}
+.pat-stars{--pat:radial-gradient(rgba(255,255,255,.75) 1px,transparent 1.6px) 0 0/53px 53px,radial-gradient(color-mix(in srgb,var(--ac) 70%,transparent) 1px,transparent 1.8px) 17px 23px/79px 79px}
+.pat-scan{--pat:repeating-linear-gradient(0deg,color-mix(in srgb,var(--ac) 12%,transparent) 0 1px,transparent 1px 4px)}
+.pat-paper{--pat:repeating-linear-gradient(0deg,color-mix(in srgb,var(--ac) 9%,transparent) 0 1px,transparent 1px 30px)}
+.pat-brick{--pat:radial-gradient(circle,color-mix(in srgb,var(--ac) 32%,transparent) 0 6px,transparent 7px) 0 0/30px 30px}
+
+/* Cards */
+.card{background:rgba(6,6,10,.66);border:1px solid color-mix(in srgb,var(--ac) 22%,#000);display:flex;flex-direction:column;min-width:0}
+.cover{position:relative;aspect-ratio:4/3;max-width:100%;overflow:hidden;background:var(--pat),linear-gradient(var(--ang),color-mix(in srgb,var(--ac) 36%,var(--a)),var(--b));display:flex;align-items:flex-end;isolation:isolate}
+.cover::after{content:attr(data-l);position:absolute;right:-6px;top:-34px;font-family:var(--fd-s);font-size:190px;line-height:1;color:var(--ac);opacity:.16;z-index:-1}
+.cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+.cover .num,.cover .kind{position:absolute;top:8px;font-size:11px;font-weight:700;letter-spacing:.1em;background:rgba(0,0,0,.6);padding:2px 7px;z-index:2}
+.cover .num{left:8px;font-variant-numeric:tabular-nums}
+.cover .kind{right:8px;text-transform:uppercase}
+.cover .ct{position:relative;z-index:1;width:100%;padding:34px 12px 12px;background:linear-gradient(transparent,rgba(0,0,0,.78));font-family:var(--fd-s);font-size:25px;line-height:1.02;letter-spacing:.03em;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.6);text-wrap:balance;overflow-wrap:anywhere}
+.cover.hasimg .ct{display:none}
+.stamp{position:absolute;z-index:3;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-12deg);border:3px solid var(--ok);color:var(--ok);font-family:var(--fd);font-size:34px;letter-spacing:.12em;padding:0 12px;background:rgba(0,0,0,.55);display:none}
+.card.done .stamp{display:block}
+.card.done .cover{filter:saturate(.55) brightness(.75)}
+.card.done h3{text-decoration:line-through;text-decoration-thickness:2px;color:var(--mute)}
+.info{padding:12px;display:flex;flex-direction:column;gap:6px;flex:1;min-width:0}
+.trow{display:flex;gap:8px;align-items:flex-start;justify-content:space-between}
+.trow h3{margin:0;font-size:16px;line-height:1.2;font-weight:700;overflow-wrap:anywhere;min-width:0}
+.year{flex:none;font-variant-numeric:tabular-nums;font-weight:700;font-size:12px;color:#000;background:var(--ac);padding:2px 8px;white-space:nowrap}
+.ksub{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ac);font-weight:700}
+.desc{margin:0;color:#d4d0dc;font-size:13.5px;flex:1}
+.acts{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:4px}
+.chk{display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-weight:700;font-size:13px;margin-right:auto;padding:4px 0}
+.chk input{appearance:none;-webkit-appearance:none;width:22px;height:22px;border:2px solid var(--ac);background:transparent;margin:0;display:grid;place-items:center;cursor:pointer}
+.chk input::after{content:"";width:11px;height:6px;border-left:3px solid #000;border-bottom:3px solid #000;transform:rotate(-45deg) translate(1px,-1px);opacity:0}
+.chk input:checked{background:var(--ok);border-color:var(--ok)}
+.chk input:checked::after{opacity:1}
+.mini{background:transparent;border:1px solid var(--line);padding:4px 8px;font-size:12px;color:var(--mute)}
+.mini:hover{color:var(--ink);border-color:var(--ac)}
+.mini.has{color:var(--ink);border-color:var(--ac)}
+.note textarea{width:100%;min-height:70px;resize:vertical;background:rgba(0,0,0,.45);border:1px solid var(--line);padding:8px;font-size:13px}
+.note[hidden]{display:none}
+
+/* Add forms */
+.addrow{padding:16px 20px 0;display:flex;flex-direction:column;gap:10px}
+@media(max-width:520px){.addrow{padding:14px 14px 0}}
+.addform{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;background:rgba(0,0,0,.45);padding:12px;border:1px solid var(--line)}
+.addform[hidden]{display:none}
+.addform input,.addform select{background:var(--panel);border:1px solid var(--line);padding:8px;min-width:0;width:100%}
+.addform .wide{grid-column:1/-1}
+.newsec{margin:30px 0 0;padding:20px;border:1px dashed #5a5a6c;display:grid;gap:10px}
+.newsec h2{margin:0;font-family:var(--fd);font-size:30px;letter-spacing:.06em}
+.newsec form{display:flex;gap:8px;flex-wrap:wrap}
+.newsec input{flex:1 1 220px;background:var(--panel);border:1px solid var(--line);padding:8px 12px;min-width:0}
+
+/* Credits */
+.credits{margin-top:50px;padding:34px 22px;background:linear-gradient(120deg,#2a0a0c,#0c0c12 70%);border:1px solid var(--line);display:grid;gap:8px}
+.credits h2{margin:0;font-family:var(--fd);font-size:40px;letter-spacing:.08em}
+.credits a{color:#fff;font-weight:700;text-underline-offset:3px}
+.credits p{margin:0;color:var(--mute);max-width:70ch}
+
+/* Modal + toast */
+.modal{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.72);display:grid;place-items:center;padding:16px}
+.modal[hidden]{display:none}
+.mbox{background:var(--panel);border:1px solid var(--line);width:min(420px,100%);padding:22px;display:grid;gap:12px}
+.mbox h2{margin:0;font-family:var(--fd);font-size:34px;letter-spacing:.06em}
+.tabs{display:flex;gap:6px}
+.tabs button{flex:1;padding:8px;background:var(--panel2);border:1px solid var(--line);font-weight:700}
+.tabs button[aria-selected=true]{background:#fff;color:#000}
+.mbox label{display:grid;gap:4px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.mbox input{background:var(--bg);border:1px solid var(--line);padding:10px;font-size:15px;text-transform:none;letter-spacing:0;color:var(--ink)}
+.msg{min-height:1.2em;font-size:13px;color:#ff8a80;margin:0}
+.fine{font-size:12px;color:var(--mute);margin:0}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));background:#fff;color:#000;padding:9px 16px;font-weight:700;z-index:120;max-width:calc(100% - 32px)}
+.toast[hidden]{display:none}
+.empty{padding:30px;text-align:center;color:var(--mute);border:1px dashed var(--line)}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.bar i{transition:none}}
+</style>
+
+<header class="top">
+  <div class="top-in">
+    <div class="brand">
+      <button class="logo" id="logoBtn" type="button" aria-label="Logotipo original de El Archivo Marvel" title="El Archivo Marvel">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" rx="8" fill="#e8322f"/><path d="M10 20H90V80H10Z" fill="none" stroke="#fff" stroke-width="3"/><text x="50" y="49" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-size="23" font-weight="900" fill="#fff">MARVEL</text><text x="50" y="68" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" font-weight="700" letter-spacing="2" fill="#fff">ARCHIVE</text></svg>
+      </button>
+      <div>
+        <p class="bt">WIKI TEMPORAL</p>
+        <div class="bs">Universo Marvel · orden cronológico</div>
+      </div>
+    </div>
+    <div class="tools">
+      <input type="search" id="q" placeholder="Buscar título…" aria-label="Buscar título">
+      <select id="jump" class="jump" aria-label="Ir a una etapa"></select>
+      <button class="btn" id="pend" type="button" aria-pressed="false">Solo pendientes</button>
+      <div class="who" id="who"></div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="hero">
+    <h1>El orden real de todo <em>Marvel</em></h1>
+    <p>Películas, series, one-shots y animaciones en el orden exacto en que conviene verlas. Marcá lo que ya viste, escribí tus comentarios y agregá títulos nuevos cuando salgan.</p>
+    <div class="meter"><div class="bar" aria-hidden="true"><i id="gbar"></i></div><span id="gtxt">0 de 0 vistos</span></div>
+  </section>
+
+  <div class="layout">
+    <nav class="rail" id="rail" aria-label="Etapas"></nav>
+    <main id="app"></main>
+  </div>
+
+  <footer class="credits">
+    <h2>Créditos</h2>
+    <p>Idea y armado de la lista cronológica: <a href="https://www.instagram.com/joaco.zarate_/" target="_blank" rel="noopener">@joaco.zarate_</a> en Instagram.</p>
+    <p>Proyecto de fans, sin fines de lucro y no oficial. Las portadas gráficas de este archivo son ilustraciones vectoriales originales creadas para el sitio. Marvel y todos sus personajes pertenecen a sus respectivos dueños.</p>
+  </footer>
+</div>
+
+<div class="modal" id="modal" hidden>
+  <div class="mbox" role="dialog" aria-modal="true" aria-labelledby="mt">
+    <h2 id="mt">Tu cuenta</h2>
+    <div class="tabs" role="tablist"><button type="button" role="tab" id="tabIn" aria-selected="true">Entrar</button><button type="button" role="tab" id="tabUp" aria-selected="false">Crear cuenta</button></div>
+    <form id="authForm" autocomplete="on" style="display:grid;gap:12px">
+      <label for="au">Usuario<input id="au" autocomplete="username" required maxlength="30"></label>
+      <label for="ap">Contraseña<input id="ap" type="password" autocomplete="current-password" required minlength="4"></label>
+      <p class="msg" id="amsg" role="alert"></p>
+      <button class="btn red" type="submit" id="asub">Entrar</button>
+    </form>
+    <p class="fine">Las cuentas se guardan solo en este navegador y dispositivo. Tu progreso y comentarios quedan asociados a tu usuario.</p>
+    <button class="btn sm" type="button" id="mclose">Cerrar</button>
+  </div>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+/* ---------- Temas por etapa ---------- */
+var F={bebas:"'Bebas Neue',Impact,sans-serif",anton:"Anton,Impact,sans-serif",type:"'Special Elite','Courier New',monospace",bangers:"Bangers,Impact,cursive",cinzel:"Cinzel,Georgia,serif",orb:"Orbitron,'Arial Black',sans-serif",marker:"'Permanent Marker',cursive"};
+var TH={
+ retro:{a:"#33220f",b:"#120e09",ac:"#dcb46c",f:F.type,p:"paper"},
+ fase1:{a:"#0d2f66",b:"#050e1f",ac:"#52a8ff",f:F.bebas,p:"rays"},
+ green:{a:"#11452d",b:"#06130c",ac:"#3ddc84",f:F.anton,p:"grid"},
+ green2:{a:"#0f4a45",b:"#06161a",ac:"#6be8d2",f:F.anton,p:"grid"},
+ green3:{a:"#3a4a0f",b:"#101605",ac:"#b8f23d",f:F.anton,p:"grid"},
+ def:{a:"#45090f",b:"#0c0304",ac:"#ff3b3b",f:F.anton,p:"stripes"},
+ cosmic:{a:"#2e1262",b:"#0a0517",ac:"#b985ff",f:F.orb,p:"stars"},
+ cosmic2:{a:"#44104f",b:"#0d0414",ac:"#ff74d8",f:F.orb,p:"stars"},
+ cosmic3:{a:"#3a2a0f",b:"#12081f",ac:"#ffd166",f:F.orb,p:"stars"},
+ glitch:{a:"#15292f",b:"#060a0c",ac:"#5ce1e6",f:F.orb,p:"scan"},
+ fase4:{a:"#520e14",b:"#120305",ac:"#ff5a5f",f:F.bebas,p:"rays"},
+ tobey:{a:"#7d0d17",b:"#0a1a52",ac:"#ff3b47",f:F.bangers,p:"dots"},
+ garfield:{a:"#0c2f60",b:"#04060e",ac:"#58bcff",f:F.bebas,p:"grid"},
+ miles:{a:"#240c3d",b:"#03030a",ac:"#ff2d95",f:F.marker,p:"dots"},
+ noir:{a:"#303030",b:"#060606",ac:"#ececec",f:F.type,p:"scan"},
+ sony:{a:"#202027",b:"#050507",ac:"#c9c9d6",f:F.anton,p:"rays"},
+ fox:{a:"#463a00",b:"#070712",ac:"#ffcc00",f:F.anton,p:"grid"},
+ f4:{a:"#0c3070",b:"#050b1c",ac:"#6bb6ff",f:F.bebas,p:"rays"},
+ tv:{a:"#0e4146",b:"#041110",ac:"#36e0d0",f:F.anton,p:"grid"},
+ fase5:{a:"#573e00",b:"#120d02",ac:"#ffc233",f:F.bebas,p:"rays"},
+ blade:{a:"#310007",b:"#050003",ac:"#e0102b",f:F.cinzel,p:"stripes"},
+ classic:{a:"#1f1f2e",b:"#07070b",ac:"#e8322f",f:F.cinzel,p:"paper"},
+ fase6:{a:"#592700",b:"#130800",ac:"#ff8a1f",f:F.bebas,p:"rays"},
+ legion:{a:"#33115c",b:"#04302f",ac:"#ffd23f",f:F.orb,p:"dots"},
+ ghost:{a:"#481500",b:"#0a0300",ac:"#ff7a1a",f:F.bangers,p:"stripes"},
+ vhs:{a:"#431050",b:"#0a0a12",ac:"#ff9f1c",f:F.type,p:"scan"},
+ analog:{a:"#443107",b:"#120d04",ac:"#ffd23f",f:F.bangers,p:"dots"},
+ n90:{a:"#30105f",b:"#05142e",ac:"#20e3b2",f:F.bangers,p:"stripes"},
+ lions:{a:"#1b3250",b:"#070c14",ac:"#8fb7e0",f:F.anton,p:"grid"},
+ moa:{a:"#004666",b:"#02131d",ac:"#31d0ff",f:F.bangers,p:"dots"},
+ rising:{a:"#561258",b:"#14051a",ac:"#ff6ad5",f:F.marker,p:"dots"},
+ anime:{a:"#52091a",b:"#12040a",ac:"#ffffff",f:F.anton,p:"rays"},
+ unicos:{a:"#2c3242",b:"#090a0f",ac:"#9ad1ff",f:F.bebas,p:"grid"},
+ kids:{a:"#0b438a",b:"#32096a",ac:"#ffd23f",f:F.bangers,p:"dots"},
+ lego:{a:"#781010",b:"#1c0505",ac:"#ffd400",f:F.bangers,p:"brick"},
+ adult:{a:"#310b47",b:"#05010a",ac:"#ff3cac",f:F.anton,p:"scan"}
+};
+var CUSTOM_THEMES=["fase1","green","cosmic","fase4","fase5","tv","fase6","unicos"];
+
+/* ---------- Datos: titulo|año|descripción|tipo(opcional) ---------- */
+/* tipos: p película, s serie, c cortometraje, e especial, a animación, pa película animada, k cortos */
+var D=[
+["G","⚫","SPIDER-VERSE","Todas las versiones del trepamuros, intercaladas donde corresponden."],
+["G","🔮","MARVEL MULTIVERSO","Otros universos, estudios y sagas que se cruzan con el MCU."],
+["G","🌌","UNIVERSOS PERSONAJES CLÁSICOS","Adaptaciones independientes de personajes de Marvel."],
+["G","🪐","UNIVERSOS ALTERNATIVOS Y ANTIGUOS DE MARVEL","Series y películas de otras épocas y estudios."],
+["G","🎉","MARVEL UNIVERSOS ANIMADOS","Todo el universo animado, por época y estudio."]
+];
+var SEC=[
+["🟤","PRE-HISTORIA MCU","retro","p",`
+Los Ojos de Wakanda|2025|Serie animada que recorre la historia antigua de Wakanda y a sus guerreros Hatut Zeraze.|a
+Capitán América: El primer vengador|2011|Steve Rogers pasa de soldado débil a supersoldado y enfrenta a Cráneo Rojo en la Segunda Guerra Mundial.
+One-Shot: Agente Carter|2013|Peggy Carter queda al mando de una misión de la SSR después de la guerra.
+Agente Carter – T1|2015|Peggy trabaja en la SSR en 1946 mientras intenta limpiar el nombre de Howard Stark.
+Agente Carter – T2|2016|La investigación la lleva a Los Ángeles, donde se topa con la misteriosa Materia Zero.`],
+["🔵","FASE 1","fase1","p",`
+Capitana Marvel|2019|Carol Danvers recupera su pasado en medio de la guerra entre kree y skrulls en los años 90.
+Iron Man|2008|Tony Stark construye su primera armadura para escapar del cautiverio y se convierte en héroe.
+Iron Man 2|2010|Con su identidad pública, Tony enfrenta a Ivan Vanko y a Justin Hammer.
+One-Shot: Algo gracioso sucedió en la búsqueda del martillo de Thor|2011|Coulson llega al cráter de Mjolnir y un guardia le complica el trabajo.
+Thor|2011|El dios del trueno es desterrado a la Tierra y debe demostrar que es digno de su martillo.
+El increíble Hulk|2008|Bruce Banner huye del ejército mientras busca una cura para su transformación.
+One-Shot: El consultor|2011|Dos agentes de S.H.I.E.L.D. debaten si Emil Blonsky puede ser parte de los Vengadores.
+Los Vengadores|2012|Nick Fury reúne a los héroes más poderosos para frenar la invasión de Loki.
+One-Shot: Ítem 47|2012|Una pareja encuentra un arma chitauri tras la batalla de Nueva York.`],
+["🟢","FASE 2","green","p",`
+Iron Man 3|2013|Tony Stark, marcado por lo vivido en Nueva York, enfrenta al Mandarín y a la tecnología Extremis.
+One-Shot: ¡Viva el Rey!|2014|Trevor Slattery cuenta su historia desde la cárcel tras el engaño del Mandarín.
+Agents of S.H.I.E.L.D. – T1 (Ep 1–7)|2013|Phil Coulson arma un equipo nuevo para investigar casos con lo extraordinario.
+Thor: El mundo oscuro|2013|Thor se enfrenta a Malekith y a los elfos oscuros, que buscan el Éter.
+Agents of S.H.I.E.L.D. – T1 (Ep 8–16)|2013|El equipo sigue el misterio de la resurrección de Coulson y la amenaza de Centipede.
+Capitán América: El soldado del invierno|2014|Steve descubre que Hydra se infiltró en S.H.I.E.L.D. y enfrenta al Soldado del Invierno.
+Agents of S.H.I.E.L.D. – T1 (Ep 17–22)|2014|La caída de la agencia obliga al equipo de Coulson a sobrevivir por su cuenta.`],
+["🟢","POST SOLDADO DEL INVIERNO","green2","p",`
+Agents of S.H.I.E.L.D. – T2 (Ep 1–19)|2014|S.H.I.E.L.D. se reconstruye mientras aparecen los Inhumanos y los restos de Hydra.
+Guardianes de la Galaxia|2014|Peter Quill y un grupo de marginados se unen para detener a Ronan y su Gema del Poder.
+Guardianes de la Galaxia Vol. 2|2017|Los Guardianes conocen a Ego, el padre de Peter, y descubren su verdadero plan.
+Yo soy Groot – T1|2022|Cortos animados con el pequeño Groot metiéndose en problemas por el cosmos.|a
+Yo soy Groot – T2|2023|Nuevas aventuras del pequeño Groot en mundos extraños y divertidos.|a
+Vengadores: La era de Ultrón|2015|Tony Stark crea a Ultrón para proteger la Tierra y el plan se sale de control.
+Agents of S.H.I.E.L.D. – T2 (Ep 20–22)|2015|El final de la temporada enfrenta al equipo contra Hydra y Hive.`],
+["🟢","POST ULTRÓN","green3","p",`
+Ant-Man: El Hombre Hormiga|2015|Scott Lang hereda el traje de Hank Pym y planea un golpe imposible.
+Agents of S.H.I.E.L.D. – T3 (Ep 1–19)|2015|El equipo enfrenta las consecuencias de la Niebla Terrígena y a Hive.
+Capitán América: Civil War|2016|Los Vengadores se dividen por los Acuerdos de Sokovia.
+Agents of S.H.I.E.L.D. – T3 (Ep 20–22)|2016|El cierre de temporada lleva al equipo a un enfrentamiento con Hive y a un nuevo líder.`],
+["🔸","SAGA DE LOS DEFENSORES","def","s",`
+Daredevil – T1|2015|Matt Murdock combate el crimen de noche en Hell's Kitchen y enfrenta a Kingpin.
+Jessica Jones – T1|2015|La detective Jessica Jones intenta escapar del control de Kilgrave.
+Daredevil – T2|2016|Aparecen el Castigador y Elektra mientras Matt arriesga su doble vida.
+Luke Cage – T1|2016|Luke Cage busca limpiar Harlem de la mano de Cottonmouth.
+Iron Fist – T1|2017|Danny Rand vuelve a Nueva York y debe probar quién es.
+The Defenders – T1|2017|Los cuatro héroes callejeros se unen contra La Mano.
+The Punisher – T1|2017|Frank Castle sale de las sombras para vengarse y descubrir una conspiración.
+Jessica Jones – T2|2018|Jessica investiga el origen de sus poderes y su pasado.
+Luke Cage – T2|2018|Luke enfrenta a Bushmaster mientras defiende Harlem.
+Iron Fist – T2|2018|Danny se alía con Colleen y se enfrenta a Davos y a un nuevo enemigo.
+Daredevil – T3|2018|Matt se recupera y debe frenar el regreso de Kingpin.
+The Punisher – T2|2019|Frank protege a una adolescente y se cruza con Jigsaw.
+Jessica Jones – T3|2019|Jessica enfrenta a un asesino manipulador y cierra su historia.`],
+["🟣","FASE 3","cosmic","p",`
+Black Widow|2021|Natasha Romanoff enfrenta su pasado y la conspiración de la Habitación Roja.
+Doctor Strange: Hechicero Supremo|2016|Un neurocirujano arrogante descubre la magia y el multiverso.
+Agents of S.H.I.E.L.D. – T4 (Ep 1–8)|2016|Ghost Rider llega a la escena y el equipo enfrenta amenazas místicas.
+Spider-Man: Homecoming|2017|Peter Parker intenta probarse como héroe mientras enfrenta al Buitre.
+Pantera Negra|2018|T'Challa asume el trono de Wakanda y enfrenta a Killmonger.
+Agents of S.H.I.E.L.D. – T4 (Ep 9–22)|2017|El equipo cae en una realidad virtual y combate a Aida.`],
+["🟣","RUMBO A INFINITY WAR","cosmic2","p",`
+Thor: Ragnarok|2017|Thor debe escapar de Sakaar y regresar a Asgard antes de que Hela lo destruya todo.
+Agents of S.H.I.E.L.D. – T5 (Ep 1–10)|2017|El equipo es lanzado al futuro, a una Tierra destruida.
+Vengadores: Infinity War|2018|Thanos viaja por el universo para reunir las Gemas del Infinito.
+Agents of S.H.I.E.L.D. – T5 (Ep 11–22)|2018|Regresan al presente para frenar a Glenn Talbot y a la amenaza que los persigue.`],
+["🟣","CIERRE DE LA SAGA DEL INFINITO","cosmic3","p",`
+Ant-Man y La Avispa|2018|Scott Lang, Hope y Hank buscan a Janet van Dyne en el Reino Cuántico.
+Vengadores: Endgame|2019|Los héroes que quedan intentan revertir el chasquido de Thanos.`],
+["🟣","POST-ENDGAME (líneas temporales alternativas – fuera del canon principal del MCU)","glitch","s",`
+Agents of S.H.I.E.L.D. – T6 (Ep 1–13)|2019|El equipo enfrenta a los Chronicoms y a un nuevo líder alienígena.
+Agents of S.H.I.E.L.D. – T7 (Ep 1–13)|2020|Viaje en el tiempo para salvar a S.H.I.E.L.D. de los Chronicoms a través de las décadas.`],
+["🔴","FASE 4","fase4","p",`
+Spider-Man: Far From Home|2019|Peter viaja a Europa y se topa con Mysterio y con el peso de su legado.
+WandaVision|2021|Wanda vive en una realidad de sitcom que oculta una verdad inquietante.|s
+Falcon y el Soldado del Invierno|2021|Sam Wilson y Bucky Barnes enfrentan a los Flag Smashers.|s
+Loki – T1|2021|El dios del engaño es arrestado por la AVT y atrapado en la línea del tiempo.
+What If…? – T1|2021|El Vigilante muestra realidades alternativas del MCU.|a
+What If…? – T2|2023|Más historias alternativas y un nuevo giro en las líneas del multiverso.|a
+What If…? – T3|2024|Cierre de la serie con una gran batalla multiversal.|a
+Shang-Chi y La Leyenda De Los 10 Anillos|2021|Shang-Chi enfrenta su pasado y a la organización de su padre.
+Eternals|2021|Los inmortales regresan para proteger a la humanidad de los Desviantes.`],
+["🕷️","TOBEY MAGUIRE","tobey","p",`
+Spider-Man|2002|Peter Parker obtiene sus poderes y enfrenta al Duende Verde.
+Spider-Man 2|2004|Peter duda de su vida de héroe mientras el Doctor Octopus amenaza la ciudad.
+Spider-Man 3|2007|El simbionte negro corrompe a Peter y despierta viejos conflictos.`],
+["🕸️","ANDREW GARFIELD","garfield","p",`
+The Amazing Spider-Man|2012|Peter descubre el secreto de sus padres y se enfrenta a Lagarto.
+The Amazing Spider-Man 2|2014|Spider-Man enfrenta a Electro mientras su historia con Gwen llega a un punto límite.`],
+["⚡","MILES MORALES","miles","pa",`
+Spider-Man: Into the Spider-Verse|2018|Miles Morales descubre su poder y se une a otros Spider-Men.
+Spider-Man: Across the Spider-Verse|2023|Miles cruza el multiverso y choca con la Sociedad Spider.
+Spider-Man: Beyond the Spider-Verse|Próximamente|Cierre de la trilogía animada, aún sin estreno.`],
+["🕵️","SPIDER-MAN NOIR","noir","s",`
+Spider-Man Noir (Blanco y negro / Color) – T1|2026|Un Spider-Man de los años 30 investiga crímenes en una Nueva York oscura.`],
+["🧬","UNIVERSO SONY","sony","p",`
+Venom|2018|Eddie Brock se une a un simbionte alienígena y enfrenta a Riot.
+Venom: Carnage liberado|2021|Eddie y Venom deben detener a Cletus Kasady y su simbionte Carnage.`],
+["🔴","FASE 4 CONTINUACIÓN","fase4","p",`
+Spider-Man: No Way Home|2021|Peter pide ayuda a Doctor Strange y el multiverso se abre.`],
+["🧬","UNIVERSO SONY CONTINUACIÓN","sony","p",`
+Morbius|2022|Un bioquímico intenta curarse una enfermedad y se convierte en vampiro.
+Madame Web|2024|Cassandra Webb descubre sus visiones y protege a tres jóvenes.
+Venom: El último baile|2024|Eddie y Venom son perseguidos por ambos mundos y toman una decisión final.
+Kraven El Cazador|2024|Sergei Kravinoff emprende su camino como cazador implacable.`],
+["🔴","FASE 4 CONTINUACIÓN","fase4","s",`
+Hawkeye|2021|Clint Barton y Kate Bishop enfrentan una conspiración en plena Navidad.
+Moon Knight|2022|Steven Grant comparte cuerpo con un mercenario y el dios Khonshu.`],
+["🧿","UNIVERSO MUTANTE FOX","fox","p",`
+X-Men: Primera generación|2011|Charles Xavier y Erik Lehnsherr forman el primer equipo de mutantes.
+X-Men Orígenes: Wolverine|2009|Logan revive su pasado y su relación con Victor Creed.
+X-Men|2000|Los mutantes enfrentan los planes de Magneto y el miedo humano.
+X-Men 2|2003|Xavier y Magneto se unen para detener a Stryker.
+X-Men: La batalla final|2006|Un supuesto remedio contra la mutación divide al mundo mutante.
+Wolverine: Inmortal|2013|Logan viaja a Japón y descubre su vulnerabilidad.
+X-Men: Días del futuro pasado|2014|Wolverine regresa al pasado para evitar un futuro apocalíptico.
+X-Men: Apocalipsis|2016|El primer mutante despierta y amenaza con destruir la Tierra.
+X-Men: Fénix Oscura|2019|Jean Grey pierde el control de su poder cósmico.
+Los nuevos mutantes|2020|Jóvenes mutantes encerrados en un hospital enfrentan sus miedos.
+Deadpool|2016|Un mercenario boca floja busca vengarse de quien lo transformó.
+Deadpool 2|2018|Deadpool arma X-Force para proteger a un joven mutante.
+Logan|2017|Un Wolverine envejecido protege a una joven con poderes similares.
+X-Men '97 – T1|2024|Los X-Men vuelven en una continuación de la serie animada clásica.|a
+X-Men '97 – T2|2026|Nuevas amenazas llevan a los X-Men a una guerra mutante.|a`],
+["🔷","UNIVERSOS DE LOS 4 FANTASTICOS","f4","p",`
+Los 4 Fantásticos|2005|Cuatro personas obtienen poderes tras una tormenta cósmica y enfrentan al Doctor Doom.
+Los 4 Fantásticos y Silver Surfer|2007|La llegada del Silver Surfer anuncia el peligro de Galactus.
+Los 4 Fantásticos|2015|Reinicio de la historia con un tono más oscuro y un viaje a otra dimensión.`],
+["📺","UNIVERSOS MARVEL TV","tv","s",`
+Inhumanos|2017|La familia real inhumana huye a Hawái tras un golpe de Estado.`],
+["🔴","FASE 4 CONTINUACIÓN","fase4","p",`
+Doctor Strange en el Multiverso de la Locura|2022|Strange y América Chávez huyen de Wanda por el multiverso.
+Ms. Marvel|2022|Kamala Khan descubre sus poderes y su herencia familiar.|s
+Thor: Love and Thunder|2022|Thor enfrenta a Gorr, el Carnicero de Dioses, junto a Jane Foster.
+She Hulk: Defensora de Héroes|2022|Jennifer Walters equilibra su vida de abogada con ser She-Hulk.|s
+Hombre lobo por la noche (Color)|2022|Cazadores de monstruos compiten por una reliquia en una mansión.|e
+Hombre lobo por la noche (Blanco y Negro)|2022|La misma historia en una versión clásica monocromática.|e
+Guardianes de la Galaxia: Especial Navidad|2022|Mantis y Drax buscan el regalo perfecto para Peter Quill.|e
+Pantera Negra: Wakanda Por Siempre|2022|Wakanda enfrenta a Namor y al reino submarino de Talokan.`],
+["🟡","FASE 5","fase5","p",`
+Ant-Man y La Avispa: Quantumania|2023|La familia Lang queda atrapada en el Reino Cuántico frente a Kang.
+Secret Invasion|2023|Nick Fury descubre una invasión secreta de skrulls renegados.|s
+Guardianes de la Galaxia Vol. 3|2023|Los Guardianes salvan a Rocket y enfrentan al Alto Evolucionador.
+Loki – T2|2023|Loki lucha por salvar la AVT y el flujo del tiempo.|s
+The Marvels|2023|Carol, Monica y Kamala intercambian lugares cada vez que usan sus poderes.
+Echo|2024|Maya Lopez enfrenta su pasado y reconecta con su herencia.|s
+Marvel Zombies|2025|Una historia de supervivencia en un universo infectado por zombis.|a
+Ironheart|2025|Riri Williams crea su armadura y enfrenta a un villano misterioso.|s
+Agatha: All Along|2024|Agatha Harkness recorre el Camino de las Brujas junto a un nuevo aquelarre.|s
+Your Friendly Neighborhood Spider-Man – T1|2025|Peter Parker joven aprende a ser héroe bajo la guía de Norman Osborn.|a
+Your Friendly Neighborhood Spider-Man – T2|Próximamente|Segunda temporada de la serie animada, aún sin estreno.|a`],
+["🦇","BLADE","blade","p",`
+Blade|1998|Un cazador mitad humano, mitad vampiro, protege a la humanidad.
+Blade II|2002|Blade se alía con vampiros para detener a una nueva raza letal.
+Blade Trinity|2004|Blade enfrenta a Drácula con ayuda de los Cazadores de la Noche.`],
+["♠️","PERSONAJES CLASICOS MARVEL","classic","p",`
+Daredevil|2003|Matt Murdock combate el crimen de noche y se enfrenta al Kingpin.
+Elektra|2005|La asesina Elektra debe proteger a una joven y a su padre.`],
+["🟠","FASE 6","fase6","p",`
+Deadpool & Wolverine|2024|Deadpool y Wolverine se unen en una misión que pone en juego el multiverso.
+Daredevil: Born Again – T1|2025|Matt Murdock vuelve a enfrentar a Kingpin, ahora en la política.|s
+Capitán América: Un Nuevo Mundo|2025|Sam Wilson asume como Capitán América frente a una crisis global.
+Thunderbolts*|2025|Antihéroes y exagentes son reunidos para una misión peligrosa.
+Daredevil: Born Again – T2|2026|Matt y Wilson Fisk chocan en una Nueva York en tensión.|s
+Los 4 Fantásticos: Primeros Pasos|2025|La primera familia de Marvel enfrenta a Galactus en una Tierra retro-futurista.
+Wonder Man|2026|Simon Williams busca su gran oportunidad como actor y héroe.|s
+The Punisher: One Last Kill|2026|Frank Castle vive un último capítulo en un especial.|e
+Spider-Man: Brand New Day|2026|Peter Parker enfrenta una nueva etapa lejos de su vida anterior.
+Vision Quest|2026|Visión busca recuperar su identidad y su humanidad.|s
+Avengers: Doomsday|Próximamente|La amenaza del Doctor Doom reúne a los héroes de distintos universos.
+Daredevil: Born Again – T3|Próximamente|Tercera temporada de Daredevil: Born Again, aún sin estreno.|s`],
+["🧿","SERIES UNIVERSO MUTANTE FOX","legion","s",`
+Legion – T1|2017|David Haller intenta comprender sus poderes y su mente.
+Legion – T2|2018|David y su equipo enfrentan al Rey de las Sombras.
+Legion – T3|2019|David asume su poder y su destino.
+The Gifted – T1|2017|Una familia mutante huye del gobierno y se une a la resistencia.
+The Gifted – T2|2018|La Hermandad y el Subterráneo chocan en una guerra mutante.`],
+["📺","UNIVERSOS MARVEL TV","tv","s",`
+Cloak & Dagger – T1|2018|Dos adolescentes obtienen poderes opuestos y se unen contra la injusticia.
+Cloak & Dagger – T2|2019|Tandy y Tyrone enfrentan nuevos peligros en Nueva Orleans.
+Runaways – T1|2017|Un grupo de adolescentes descubre que sus padres son villanos.
+Runaways – T2|2018|Los jóvenes huyen y arman su propia base.
+Runaways – T3|2019|Cierre de la serie con viajes en el tiempo y secretos.
+Helstrom – T1|2020|Hermanos hijos de un demonio enfrentan el mal en la ciudad.`],
+["🔥","GHOST RIDER","ghost","p",`
+Ghost Rider: El Vengador Fantasma|2007|Johnny Blaze vende su alma y se convierte en el Motoquero Fantasma.
+Ghost Rider: Espíritu de Venganza|2011|Johnny protege a un niño del diablo en una nueva misión.`],
+["⌛","UNIVERSOS MARVEL RETRO","vhs","p",`
+Dr.Strange|1978|Película televisiva sobre el Hechicero Supremo en los años 70.|e
+Howard the Duck|1986|Un pato extraterrestre llega a la Tierra y se mete en problemas.
+The Punisher|1989|Frank Castle se convierte en un vigilante despiadado.
+Capitán América|1990|El supersoldado vuelve a la acción en una versión clásica.
+The Fantastic Four|1994|La película que nunca se estrenó oficialmente.
+Nick Fury: Agent of S.H.I.E.L.D.|1998|Nick Fury, interpretado por David Hasselhoff, enfrenta a Hydra.|e
+Hulk|2003|Bruce Banner enfrenta su pasado y el poder de su ira.
+Man-Thing|2005|Una criatura de los pantanos protege su territorio.
+The Punisher|2004|Frank Castle busca vengarse de quienes destruyeron a su familia.
+Punisher: War Zone|2008|El Castigador enfrenta a Jigsaw en una versión brutal.`],
+["📽️","MARVEL ERA ANALÓGICA","analog","a",`
+Los 4 Fantásticos|1967–1968|La primera serie animada de la familia Richards.
+Los 4 Fantásticos|1978|Nueva versión animada con H.E.R.B.I.E. como compañero.
+La Mujer Araña|1979|Jessica Drew combate el crimen como la Mujer Araña.
+El Hombre Araña y sus Sorprendentes Amigos|1981|Spider-Man, Iceman y Firestar forman un equipo.
+X-Men: Pryde of the X-Men|1989|Piloto animado de los X-Men contra Magneto.`],
+["📼","EL UNIVERSO MARVEL DE LOS 90s","n90","a",`
+X-Men|1992–1996|La serie animada clásica de los mutantes.
+Spider-Man|1994–1997|El trepamuros enfrenta villanos en una serie icónica.
+Iron Man|1994–1996|Tony Stark combate a Mandarín y a otros villanos.
+Los 4 Fantásticos|1994–1996|La familia enfrenta a Doctor Doom y Galactus.
+El Increíble Hulk|1996–1997|Bruce Banner y She-Hulk enfrentan a sus enemigos.
+Silver Surfer|1998|El Heraldo de Galactus busca su camino de regreso a casa.
+Spider-Man Sin Límites|1999|Peter Parker viaja a otra dimensión para salvar a su familia.
+Avengers: Unidos Permanecen|1999|Los Vengadores enfrentan nuevas amenazas.`],
+["💿","MARVEL UNIVERSO LIONSGATE","lions","pa",`
+Ultimate Avengers: The Movie|2006|Los Vengadores se forman para enfrentar una amenaza alienígena.
+Ultimate Avengers 2: Rise of the Panther|2006|Los Vengadores se unen a Pantera Negra contra los Chitauri.
+The Invincible Iron Man|2007|Tony Stark enfrenta a un dragón y a la historia de su familia.
+Doctor Strange: The Sorcerer Supreme|2007|Un médico descubre la magia y enfrenta a Dormammu.
+Next Avengers: Heroes of Tomorrow|2008|Los hijos de los Vengadores enfrentan a Ultrón.
+Hulk Vs Wolverine|2009|Hulk y Wolverine chocan en el Canadá.
+Hulk Vs Thor|2009|Hulk y Thor combaten en una batalla épica.
+Planet Hulk|2010|Hulk es enviado a un planeta lejano y se convierte en rey.
+Thor: Tales of Asgard|2011|Una aventura juvenil de Thor en Asgard.`],
+["🌐","UNIVERSO MAN OF ACTION","moa","a",`
+Ultimate Spider-Man|2012–2016|Peter Parker entrena con S.H.I.E.L.D. junto a otros héroes.
+Avengers Unidos|2013–2018|Los Vengadores enfrentan villanos en una serie animada.
+Hulk y los Agentes S.M.A.S.H.|2013–2014|Hulk y su equipo combaten amenazas gigantes.
+Iron Man y Hulk: Héroes Unidos|2013|Iron Man y Hulk se unen contra una amenaza común.|pa
+Iron Man y Capitán América: Héroes Unidos|2014|Dos de los Vengadores enfrentan a Hydra.|pa
+Guardianes de la Galaxia|2015–2018|Los Guardianes viven aventuras cósmicas en formato animado.
+Marvel: Las Aventuras de los Superhéroes – Combate sobre Hielo|2015|Especial animado de los héroes en una pista de hielo.|e
+Marvel Ultimate Comics|2016|Cortos animados con versiones de los cómics.|k
+Cortos de Ant-Man|2017|Cortos cómicos protagonizados por Ant-Man.|k
+Cortos de Rocket & Groot|2017|Cortos del dúo más ruidoso de la galaxia.|k
+Cortos de Avengers: Secret Wars|2017|Cortos con los Vengadores en un entorno de caos.|k`],
+["🌟","MARVEL RISING","rising","a",`
+Cortos de Rising Initiation|2018|Origen de Ms. Marvel y Squirrel Girl como jóvenes héroes.|k
+Rising Secret Warriors|2018|Ms. Marvel y Squirrel Girl forman un equipo de héroes jóvenes.|pa
+Rising Chasing Ghosts|2019|Ms. Marvel y Ghost-Spider enfrentan misterios nocturnos.|pa
+Rising Corazón de Hierro|2019|Ironheart y su equipo enfrentan una amenaza tecnológica.|pa
+Rising Batalla de las Bandas|2019|Una competencia musical se convierte en peligro.|pa
+Rising Jugando con Fuego|2019|Los héroes enfrentan a un villano que controla el fuego.|pa
+Rising Operación Shuri|2019|Shuri guía una misión de rescate.|pa`],
+["🇯🇵","MARVEL ANIME","anime","a",`
+Iron Man Anime|2010|Tony Stark enfrenta a Zodiac en una versión japonesa.
+Wolverine Anime|2011|Logan viaja a Japón en busca de su prometida.
+X-Men Anime|2011|Los X-Men enfrentan una amenaza en Japón.
+Blade Anime|2011|Blade persigue a vampiros en una historia oscura.
+Iron Man: Surge el Tecnívoro|2013|Iron Man enfrenta una máquina devoradora de tecnología.|pa
+Avengers: Los Archivos Secretos - Black Widow y Punisher|2014|Dos antihéroes se enfrentan a un enemigo común.|pa`],
+["🔭","UNIVERSOS UNICOS","unicos","a",`
+X-Men: Evolución|2000–2003|Los X-Men viven como adolescentes en la escuela de Xavier.
+Spider-Man: La Nueva Serie Animada|2003|Peter Parker enfrenta a Venom y a Duende Verde en versión CGI.
+Los Cuatro Fantásticos: Los Héroes Más Grandes del Mundo|2006–2010|La familia combate a sus enemigos más famosos.
+El Espectacular Spider-Man|2008–2009|Peter Parker equilibra la escuela y su vida como héroe.
+Wolverine y los X-Men|2009|Wolverine reúne a los mutantes tras una tragedia.
+El escuadrón de súper héroes|2009–2010|Los héroes se unen en capítulos autoconclusivos.
+Black Panther|2010|T'Challa enfrenta a sus enemigos en una serie estilo cómic.
+Avengers: Los Superhéroes Más Poderosos de la Tierra|2010–2012|Los Vengadores enfrentan amenazas cósmicas.
+Iron Man: Aventuras de Hierro|2011|Tony Stark enfrenta villanos con una armadura que cambia.
+Phineas y Ferb: Misión Marvel|2013|Phineas y Ferb se unen a Marvel en un crossover.|pa
+Marvel Disk Wars: The Avengers|2014–2015|Los Vengadores combaten con la ayuda de discos de poder.
+Spider-Man Cortos|2017|Cortos animados con el trepamuros.|k
+Spider-Man|2017–2020|Peter Parker enfrenta villanos mientras cursa la secundaria.
+Los Vengadores del Futuro de Marvel|2017–2018|Un nuevo equipo de héroes protege el futuro.
+Los Simpson: El bueno, el Bart y el Loki|2021|Loki visita Springfield en un crossover navideño.|c
+Moon Girl y Devil Dinosaurio|2023–2024|Lunella Lafayette y su dinosaurio protegen Nueva York.
+Laboratorio de Moon Girl|2024|Cortos educativos de Moon Girl.|k
+A Merry Marvel Christmas Carol|2025|Un especial navideño con los héroes de Marvel.|e`],
+["🧸","MARVEL KIDS","kids","a",`
+Aventuras de súper héroes|2017–2020|Cortos para los más pequeños con los héroes de Marvel.|k
+Spidey y sus sorprendentes amigos|2021–2025|Spidey y sus amigos viven aventuras para preescolares.
+Cortos de Spidey y sus sorprendentes amigos|2021–2025|Cortos cortos y divertidos de Spidey.|k
+Conoce a Iron Man y sus increíbles amigos Cortos|2025|Cortos de presentación de Iron Man y su equipo.|k
+Iron Man y sus increíbles amigos|2025|Iron Man y sus amigos viven aventuras para los más chicos.
+Spidey y Iron Man: ¡Vengadores Unidos!|2025|Spidey e Iron Man se unen en una aventura.|e
+Spidey y los Vengadores: Halloween en equipo!|2026|Especial de Halloween con Spidey y los Vengadores.|e
+Jeff y sus amigos superhéroes|2026|Jeff el tiburón se une a otros héroes.`],
+["🧱","LEGO MARVEL","lego","pa",`
+Marvel Superhéroes: Sobrecarga Máxima|2013|Los héroes enfrentan a Red Skull con una gran arma.
+Marvel Superhéroes: Vengadores Reunidos|2015|Los Vengadores se reúnen contra Ultrón.
+Avengers: Código Rojo|2023|Los héroes enfrentan a un nuevo enemigo en una aventura LEGO.
+Avengers: Historias Extrañas|2024|Los Vengadores se meten en misterios sobrenaturales.
+Avengers: Misión Demolición|2024|Los héroes se enfrentan a Hulk en su versión más destructiva.`],
+["🔞","MARVEL ADULTOS","adult","a",`
+M.O.D.O.K|2021|Una comedia animada sobre el villano M.O.D.O.K.
+Hit-Monkey|2021–2024|Un mono asesino busca venganza en Tokio.`]
+];
+/* Posición de cada banner de grupo: aparece justo antes de la sección con ese índice. */
+var GROUPS={11:0,19:1,24:2,27:3,31:4};
+
+/* ---------- Utilidades ---------- */
+var KL={p:"Película",s:"Serie",c:"Cortometraje",e:"Especial",a:"Animación",pa:"Película animada",k:"Cortos"};
+var $=function(s,r){return (r||document).querySelector(s)};
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function slug(s){return String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")}
+function hash(s){var h=0;for(var i=0;i<s.length;i++){h=(h*31+s.charCodeAt(i))|0}return Math.abs(h)}
+var mem={};
+var st={get:function(k){try{return localStorage.getItem(k)}catch(e){return mem[k]==null?null:mem[k]}},
+ set:function(k,v){try{localStorage.setItem(k,v);return true}catch(e){mem[k]=v;return false}},
+ del:function(k){try{localStorage.removeItem(k)}catch(e){}delete mem[k]}};
+var toastT;
+function toast(m){var t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(function(){t.hidden=true},2600)}
+
+/* ---------- Modelo ---------- */
+var BASE=[];
+SEC.forEach(function(s,i){
+  var items=s[4].split("\n").map(function(l){return l.trim()}).filter(Boolean).map(function(l){
+    var p=l.split("|"),t=p[0],y=p[1],d=p[2],k=p[3];
+    if(!k){k=/^One-Shot/i.test(t)?"c":/(^|\s)T\d/.test(t)?"s":s[3]}
+    return {id:slug(s[1])+"~"+slug(t)+"~"+slug(y),t:t,y:y,d:d,k:k};
+  });
+  BASE.push({kind:"sec",idx:i,key:"b"+i,emoji:s[0],name:s[1],th:s[2],items:items,custom:false});
+});
+var ORDER=[];
+(function(){
+  var gi=0;
+  BASE.forEach(function(s,i){
+    if(GROUPS[i]!=null){var g=D[GROUPS[i]];ORDER.push({kind:"group",emoji:g[1],name:g[2],note:g[3],key:"g"+GROUPS[i]})}
+    ORDER.push(s);
+  });
+})();
+
+var user=st.get("mw_session")||"";
+var data;
+function dkey(u){return "mw_data_"+(u||"_invitado")}
+function blank(){return {checks:{},notes:{},imgs:{},added:{},secs:[]}}
+function load(){var r=st.get(dkey(user));try{data=r?JSON.parse(r):blank()}catch(e){data=blank()}
+  ["checks","notes","imgs","added"].forEach(function(k){if(!data[k])data[k]={}});if(!data.secs)data.secs=[]}
+var saveT;
+function save(now){clearTimeout(saveT);function go(){if(!st.set(dkey(user),JSON.stringify(data)))toast("No hay espacio para guardar. Probá con imágenes más chicas.")}
+  if(now)go();else saveT=setTimeout(go,250)}
+load();
+
+function allSections(){
+  var out=ORDER.slice();
+  data.secs.forEach(function(c,i){out.push({kind:"sec",idx:1000+i,key:c.id,emoji:c.emoji||"🆕",name:c.name,th:CUSTOM_THEMES[i%CUSTOM_THEMES.length],items:[],custom:true})});
+  return out;
+}
+function itemsOf(s){return s.items.concat((data.added[s.key]||[]).map(function(a){return {id:a.id,t:a.t,y:a.y,d:a.d,k:a.k,custom:true}}))}
+
+
+/* ---------- Portadas originales automáticas para TODO el catálogo ---------- */
+/* Arte vectorial original creado para esta wiki: no usa pósters, fotogramas ni fan arts ajenos. */
+function xmlSafe(v){return String(v||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&apos;")}
+function coverTitle(t){
+  return String(t||"").replace(/^One-Shot:\s*/i,"")
+    .replace(/\s*[-–—]\s*(?:T|Temporada\s*)\d+\s*$/i,"")
+    .replace(/\s*\(Temporada\s*\d+\)\s*$/i,"")
+    .replace(/\s*S\d{1,2}\s*$/i,"").trim();
+}
+function makeCover(it,s){
+  var title=coverTitle(it.t), seed=hash((s.key||"")+title), hue=seed%360;
+  var h2=(hue+48+seed%90)%360, isAnim=/anim|anime|cartoon|lego|what if|spider-verse|x-men.?97|90s|kids|rising/i.test((s.name||"")+" "+it.t);
+  var c1="hsl("+hue+",68%,19%)",c2="hsl("+h2+",74%,8%)",accent="hsl("+((hue+seed%35)%360)+",92%,66%)";
+  var label=xmlSafe(title), words=title.split(/\s+/), line1="",line2="";
+  if(title.length>25){var cut=Math.ceil(words.length/2);line1=words.slice(0,cut).join(" ");line2=words.slice(cut).join(" ")}
+  else line1=title;
+  var motif=seed%5, art="";
+  if(motif===0) art='<circle cx="390" cy="165" r="112" fill="none" stroke="'+accent+'" stroke-width="2" opacity=".6"/><circle cx="390" cy="165" r="82" fill="none" stroke="'+accent+'" stroke-width="1" opacity=".45"/><path d="M250 390L390 80 530 390" fill="none" stroke="'+accent+'" stroke-width="3" opacity=".42"/>';
+  if(motif===1) art='<path d="M275 420L275 235Q275 105 390 75Q505 105 505 235L505 420Z" fill="none" stroke="'+accent+'" stroke-width="3" opacity=".58"/><path d="M320 420V250Q320 145 390 125Q460 145 460 250V420" fill="none" stroke="'+accent+'" stroke-width="2" opacity=".38"/>';
+  if(motif===2) art='<path d="M390 65L535 330 390 420 245 330Z" fill="none" stroke="'+accent+'" stroke-width="3" opacity=".6"/><path d="M390 110V385M270 330H510" stroke="'+accent+'" stroke-width="2" opacity=".38"/>';
+  if(motif===3) art='<path d="M185 370Q390 30 595 370M225 370Q390 95 555 370M265 370Q390 160 515 370" fill="none" stroke="'+accent+'" stroke-width="3" opacity=".52"/><circle cx="390" cy="225" r="28" fill="'+accent+'" opacity=".45"/>';
+  if(motif===4) art='<path d="M390 65L430 190 560 190 455 270 495 395 390 320 285 395 325 270 220 190 350 190Z" fill="none" stroke="'+accent+'" stroke-width="3" opacity=".55"/>';
+  var silhouette=isAnim
+   ? '<path d="M310 365Q300 260 345 220L330 165 370 190 390 155 410 190 450 165 435 220Q480 260 470 365Z" fill="#08090d" opacity=".82"/><path d="M345 255L390 275 435 255" stroke="'+accent+'" stroke-width="7" fill="none"/>'
+   : '<path d="M295 420Q292 305 325 260L330 205Q340 155 390 150Q440 155 450 205L455 260Q488 305 485 420Z" fill="#08090d" opacity=".8"/><path d="M345 230Q390 260 435 230" stroke="'+accent+'" stroke-width="4" fill="none" opacity=".7"/>';
+  var svg='<svg xmlns="http://www.w3.org/2000/svg" width="780" height="585" viewBox="0 0 780 585"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="'+c1+'"/><stop offset="1" stop-color="'+c2+'"/></linearGradient><radialGradient id="r"><stop stop-color="'+accent+'" stop-opacity=".3"/><stop offset="1" stop-color="'+accent+'" stop-opacity="0"/></radialGradient><pattern id="p" width="34" height="34" patternUnits="userSpaceOnUse"><path d="M34 0H0V34" fill="none" stroke="#fff" stroke-opacity=".055"/></pattern></defs><rect width="780" height="585" fill="url(#g)"/><rect width="780" height="585" fill="url(#p)"/><ellipse cx="390" cy="260" rx="300" ry="240" fill="url(#r)"/>'+art+silhouette+'<path d="M0 445L780 365V585H0Z" fill="#050508" opacity=".72"/><path d="M0 447L780 367" stroke="'+accent+'" stroke-width="3" opacity=".7"/><text x="38" y="48" font-family="Arial,sans-serif" font-size="18" font-weight="900" letter-spacing="5" fill="'+accent+'">EL ARCHIVO</text><text x="742" y="48" text-anchor="end" font-family="Arial,sans-serif" font-size="13" letter-spacing="3" fill="#fff" opacity=".72">MARVEL UNIVERSE</text><text x="390" y="490" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-size="'+(title.length>24?35:48)+'" font-weight="900" letter-spacing="1" fill="#fff" stroke="#000" stroke-opacity=".35" stroke-width="2" paint-order="stroke">'+xmlSafe(line1)+'</text>'+(line2?'<text x="390" y="532" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-size="35" font-weight="900" fill="#fff">'+xmlSafe(line2)+'</text>':'')+'<text x="390" y="565" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" letter-spacing="5" fill="'+accent+'">FAN ARCHIVE • ORIGINAL ART</text></svg>';
+  return "data:image/svg+xml;charset=UTF-8,"+encodeURIComponent(svg);
+}
+
+/* ---------- Render ---------- */
+function card(it,s,n){
+  var T=TH[s.th],done=!!data.checks[it.id],img=data.imgs[it.id]||makeCover(it,s),note=data.notes[it.id]||"";
+  var ang=hash(it.id)%360,letter=(it.t.replace(/^One-Shot:\s*/i,"").charAt(0)||"?").toUpperCase();
+  var num=String(n).padStart(3,"0");
+  return '<article class="card'+(done?' done':'')+'" data-id="'+esc(it.id)+'" data-t="'+esc(it.t.toLowerCase())+'" style="--ang:'+ang+'deg">'+
+   '<div class="cover'+(img?' hasimg':'')+'" data-l="'+esc(letter)+'">'+(img?'<img src="'+img+'" alt="'+esc(it.t)+'" loading="lazy">':'')+
+   '<span class="num">#'+num+'</span><span class="kind">'+esc(KL[it.k]||"")+'</span><div class="ct">'+esc(it.t.replace(/^One-Shot:\s*/i,""))+'</div><span class="stamp">VISTO</span></div>'+
+   '<div class="info"><div class="trow"><h3>'+esc(it.t)+'</h3><span class="year">'+esc(it.y)+'</span></div>'+
+   '<div class="ksub">'+esc(KL[it.k]||"")+'</div><p class="desc">'+esc(it.d||"")+'</p>'+
+   '<div class="acts"><label class="chk"><input type="checkbox" data-chk="'+esc(it.id)+'"'+(done?' checked':'')+' aria-label="Marcar '+esc(it.t)+' como visto"><span>Visto</span></label>'+
+   '<button class="mini'+(note?' has':'')+'" type="button" data-act="note" aria-expanded="false" data-id="'+esc(it.id)+'">Comentarios'+(note?' •':'')+'</button>'+
+   '<button class="mini" type="button" data-act="img" data-id="'+esc(it.id)+'">Imagen</button>'+
+   (img?'<button class="mini" type="button" data-act="imgdel" data-id="'+esc(it.id)+'">Quitar</button>':'')+
+   (it.custom?'<button class="mini" type="button" data-act="del" data-id="'+esc(it.id)+'" data-sec="'+esc(s.key)+'">Borrar</button>':'')+
+   '</div><div class="note" hidden><textarea id="n-'+esc(it.id)+'" data-note="'+esc(it.id)+'" placeholder="Tus comentarios sobre este título…" aria-label="Comentarios de '+esc(it.t)+'">'+esc(note)+'</textarea></div></div></article>';
+}
+function render(){
+  var secs=allSections(),html="",rail="",jump='<option value="">Ir a una etapa…</option>',n=0;
+  secs.forEach(function(s,i){
+    var id="sec-"+i;
+    if(s.kind==="group"){
+      html+='<div class="group" id="'+id+'"><h2>'+esc(s.emoji)+" "+esc(s.name)+'</h2><small>'+esc(s.note)+'</small></div>';
+      rail+='<div class="rg">'+esc(s.emoji)+" "+esc(s.name.split(" ").slice(0,3).join(" "))+'</div>';
+      jump+='<option value="'+id+'">'+esc(s.emoji+" "+s.name)+'</option>';
+      return;
+    }
+    var T=TH[s.th],its=itemsOf(s),parts=s.name.split(" ("),title=parts[0],sub=parts[1]?parts[1].replace(/\)$/,""):"";
+    var cards=its.map(function(it){n++;return card(it,s,n)}).join("");
+    html+='<section class="sec pat-'+T.p+'" id="'+id+'" data-key="'+esc(s.key)+'" style="--a:'+T.a+';--b:'+T.b+';--ac:'+T.ac+';--fd-s:'+T.f+'">'+
+     '<header class="sh"><span class="em">'+esc(s.emoji)+'</span><h2>'+esc(title)+'</h2>'+(sub?'<span class="sub">'+esc(sub)+'</span>':'')+'<span class="cnt" data-cnt="'+esc(s.key)+'">0/'+its.length+'</span></header>'+
+     '<div class="grid">'+(cards||'<div class="empty">Esta etapa todavía no tiene títulos. Agregá el primero abajo.</div>')+'</div>'+
+     '<div class="addrow"><div><button class="btn sm" type="button" data-act="addtoggle" data-sec="'+esc(s.key)+'">+ Agregar título a esta etapa</button>'+
+     (s.custom?' <button class="btn sm" type="button" data-act="delsec" data-sec="'+esc(s.key)+'">Borrar etapa</button>':'')+'</div>'+
+     '<form class="addform" hidden data-addform="'+esc(s.key)+'">'+
+     '<input id="at-'+esc(s.key)+'" placeholder="Título (ej: Serie – T2)" required aria-label="Título">'+
+     '<input id="ay-'+esc(s.key)+'" placeholder="Año (ej: 2027)" required aria-label="Año" maxlength="20">'+
+     '<select id="ak-'+esc(s.key)+'" aria-label="Tipo"><option value="p">Película</option><option value="s">Serie</option><option value="c">Cortometraje</option><option value="e">Especial</option><option value="a">Animación</option></select>'+
+     '<input class="wide" id="ad-'+esc(s.key)+'" placeholder="Descripción corta" aria-label="Descripción">'+
+     '<button class="btn red wide" type="submit">Agregar</button></form></div></section>';
+    rail+='<a href="#'+id+'" data-go="'+id+'"><i style="background:'+T.ac+'"></i><span class="rs">'+esc(title)+'</span></a>';
+    jump+='<option value="'+id+'">'+esc(s.emoji+" "+title)+'</option>';
+  });
+  html+='<section class="newsec"><h2>Agregar una etapa nueva</h2><form id="newsecForm"><input id="nsn" placeholder="Nombre de la etapa (ej: FASE 7)" required aria-label="Nombre de la etapa" maxlength="80"><button class="btn red" type="submit">Crear etapa</button></form><p class="fine" style="margin:0;color:var(--mute);font-size:12px">La nueva etapa se agrega al final de la línea de tiempo.</p></section>';
+  $("#app").innerHTML=html;$("#rail").innerHTML=rail;$("#jump").innerHTML=jump;
+  updateProgress();applyFilter();renderWho();renderLogo();
+}
+function updateProgress(){
+  var secs=allSections(),tot=0,done=0;
+  secs.forEach(function(s){if(s.kind!=="sec")return;var its=itemsOf(s),d=0;
+    its.forEach(function(it){if(data.checks[it.id])d++});tot+=its.length;done+=d;
+    var c=$('[data-cnt="'+s.key+'"]');if(c)c.textContent=d+"/"+its.length});
+  $("#gbar").style.width=(tot?Math.round(done/tot*100):0)+"%";
+  $("#gtxt").textContent=done+" de "+tot+" vistos ("+(tot?Math.round(done/tot*100):0)+"%)";
+}
+function applyFilter(){
+  var q=$("#q").value.trim().toLowerCase(),pend=$("#pend").getAttribute("aria-pressed")==="true";
+  document.querySelectorAll(".card").forEach(function(c){
+    var ok=(!q||c.dataset.t.indexOf(q)>-1)&&(!pend||!c.classList.contains("done"));c.hidden=!ok});
+  document.querySelectorAll(".sec").forEach(function(s){
+    var any=false;s.querySelectorAll(".card").forEach(function(c){if(!c.hidden)any=true});
+    s.hidden=(q||pend)?!any:false});
+}
+function renderWho(){
+  var w=$("#who");
+  w.innerHTML=user?'<span>Hola, <b>'+esc(user)+'</b></span><button class="btn sm" type="button" id="logout">Salir</button>':'<button class="btn red" type="button" id="login">Iniciar sesión</button>';
+}
+function renderLogo(){
+  var l=st.get("mw_logo"),b=$("#logoBtn");
+  if(l){b.style.borderStyle="solid";b.innerHTML='<img src="'+l+'" alt="Logo">'}
+}
+
+/* ---------- Imágenes ---------- */
+function readImg(file,max,type,cb){
+  var fr=new FileReader();
+  fr.onload=function(){var im=new Image();im.onload=function(){
+    var k=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement("canvas");
+    c.width=Math.max(1,Math.round(im.width*k));c.height=Math.max(1,Math.round(im.height*k));
+    c.getContext("2d").drawImage(im,0,0,c.width,c.height);cb(c.toDataURL(type,.82))};
+    im.onerror=function(){toast("No se pudo leer esa imagen.")};im.src=fr.result};
+  fr.readAsDataURL(file);
+}
+function pickFile(cb){var f=document.createElement("input");f.type="file";f.accept="image/*";f.onchange=function(){if(f.files[0])cb(f.files[0])};f.click()}
+
+/* ---------- Eventos ---------- */
+var armT={};
+$("#app").addEventListener("click",function(e){
+  var b=e.target.closest("[data-act]");if(!b)return;var act=b.dataset.act,id=b.dataset.id,sec=b.dataset.sec;
+  if(act==="note"){var card=b.closest(".card"),n=$(".note",card);n.hidden=!n.hidden;b.setAttribute("aria-expanded",String(!n.hidden));if(!n.hidden)$("textarea",n).focus()}
+  else if(act==="img"){pickFile(function(f){readImg(f,520,"image/jpeg",function(u){data.imgs[id]=u;save(true);render()})})}
+  else if(act==="imgdel"){delete data.imgs[id];save(true);render()}
+  else if(act==="addtoggle"){var f=$('[data-addform="'+sec+'"]');f.hidden=!f.hidden;if(!f.hidden)$("input",f).focus()}
+  else if(act==="del"){
+    if(!b.dataset.arm){b.dataset.arm="1";b.textContent="¿Seguro?";clearTimeout(armT[id]);armT[id]=setTimeout(function(){b.dataset.arm="";b.textContent="Borrar"},3000);return}
+    data.added[sec]=(data.added[sec]||[]).filter(function(a){return a.id!==id});delete data.checks[id];delete data.notes[id];delete data.imgs[id];save(true);render();toast("Título eliminado")}
+  else if(act==="delsec"){
+    if(!b.dataset.arm){b.dataset.arm="1";b.textContent="¿Seguro?";armT[sec]=setTimeout(function(){b.dataset.arm="";b.textContent="Borrar etapa"},3000);return}
+    (data.added[sec]||[]).forEach(function(a){delete data.checks[a.id];delete data.notes[a.id];delete data.imgs[a.id]});
+    delete data.added[sec];data.secs=data.secs.filter(function(c){return c.id!==sec});save(true);render();toast("Etapa eliminada")}
+});
+$("#app").addEventListener("change",function(e){
+  var c=e.target.closest("[data-chk]");if(!c)return;var id=c.dataset.chk;
+  if(c.checked)data.checks[id]=1;else delete data.checks[id];
+  c.closest(".card").classList.toggle("done",c.checked);save();updateProgress();applyFilter();
+});
+$("#app").addEventListener("input",function(e){
+  var t=e.target.closest("[data-note]");if(!t)return;var id=t.dataset.note;
+  if(t.value.trim())data.notes[id]=t.value;else delete data.notes[id];save();
+  var bt=$('[data-act="note"][data-id="'+id+'"]');if(bt){var has=!!data.notes[id];bt.classList.toggle("has",has);bt.textContent="Comentarios"+(has?" •":"")}
+});
+$("#app").addEventListener("submit",function(e){
+  e.preventDefault();var f=e.target;
+  if(f.id==="newsecForm"){var nm=$("#nsn").value.trim();if(!nm)return;
+    data.secs.push({id:"x"+Date.now(),name:nm.toUpperCase(),emoji:"🆕"});save(true);render();toast("Etapa creada");
+    setTimeout(function(){var all=document.querySelectorAll(".sec");all[all.length-1].scrollIntoView({behavior:"smooth"})},50);return}
+  var key=f.dataset.addform;if(!key)return;
+  var t=$("#at-"+key).value.trim(),y=$("#ay-"+key).value.trim(),k=$("#ak-"+key).value,d=$("#ad-"+key).value.trim();
+  if(!t||!y)return;
+  (data.added[key]=data.added[key]||[]).push({id:"c"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),t:t,y:y,k:k,d:d||"Sin descripción todavía."});
+  save(true);var y0=window.scrollY;render();window.scrollTo(0,y0);toast("Título agregado");
+});
+$("#rail").addEventListener("click",function(e){var a=e.target.closest("[data-go]");if(!a)return;e.preventDefault();var t=document.getElementById(a.dataset.go);if(t)t.scrollIntoView({behavior:"smooth"})});
+$("#jump").addEventListener("change",function(e){var t=document.getElementById(e.target.value);if(t)t.scrollIntoView({behavior:"smooth"});e.target.value=""});
+$("#q").addEventListener("input",applyFilter);
+$("#pend").addEventListener("click",function(){var b=$("#pend");b.setAttribute("aria-pressed",String(b.getAttribute("aria-pressed")!=="true"));applyFilter()});
+$("#logoBtn").addEventListener("click",function(){
+  if(st.get("mw_logo")&&confirm_logo())return;
+  pickFile(function(f){readImg(f,240,"image/png",function(u){st.set("mw_logo",u);renderLogo();toast("Logo actualizado")})});
+});
+var logoArm=0;
+function confirm_logo(){ /* segundo toque dentro de 3 s quita el logo */
+  if(logoArm&&Date.now()-logoArm<3000){logoArm=0;st.del("mw_logo");location.reload();return true}
+  logoArm=Date.now();toast("Tocá de nuevo para quitar el logo, o esperá para cambiarlo");return true;
+}
+
+/* ---------- Cuenta ---------- */
+var mode="in";
+function setMode(m){mode=m;$("#tabIn").setAttribute("aria-selected",String(m==="in"));$("#tabUp").setAttribute("aria-selected",String(m==="up"));
+  $("#asub").textContent=m==="in"?"Entrar":"Crear cuenta";$("#ap").autocomplete=m==="in"?"current-password":"new-password";$("#amsg").textContent=""}
+function openModal(){$("#modal").hidden=false;setMode("in");$("#au").focus()}
+function closeModal(){$("#modal").hidden=true}
+async function pw(s){try{var b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("mw:"+s));return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,"0")}).join("")}catch(e){return btoa(unescape(encodeURIComponent("mw:"+s)))}}
+function users(){try{return JSON.parse(st.get("mw_users")||"{}")}catch(e){return {}}}
+$("#who").addEventListener("click",function(e){
+  if(e.target.id==="login")openModal();
+  if(e.target.id==="logout"){user="";st.del("mw_session");load();render();toast("Sesión cerrada")}
+});
+$("#tabIn").addEventListener("click",function(){setMode("in")});
+$("#tabUp").addEventListener("click",function(){setMode("up")});
+$("#mclose").addEventListener("click",closeModal);
+$("#modal").addEventListener("click",function(e){if(e.target.id==="modal")closeModal()});
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!$("#modal").hidden)closeModal()});
+$("#authForm").addEventListener("submit",async function(e){
+  e.preventDefault();var u=$("#au").value.trim(),p=$("#ap").value,m=$("#amsg"),us=users(),key=u.toLowerCase(),h=await pw(p);
+  if(mode==="up"){
+    if(us[key]){m.textContent="Ese usuario ya existe. Probá entrar o elegí otro nombre.";return}
+    us[key]={name:u,h:h};st.set("mw_users",JSON.stringify(us));
+    var guest=st.get(dkey(""));
+    if(guest)st.set(dkey(u),guest);
+  }else{
+    if(!us[key]||us[key].h!==h){m.textContent="Usuario o contraseña incorrectos.";return}
+    u=us[key].name;
+  }
+  user=u;st.set("mw_session",u);load();render();closeModal();$("#authForm").reset();toast("Hola, "+u);
+});
+
+render();
+</script>
+
+</body></html>

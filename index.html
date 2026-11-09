@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Marvel Archive: catálogo de películas, series y animación de los universos Marvel.">
+<title>Marvel Archive — El multiverso, ordenado</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar"><a class="brand" href="#"><span class="brand-mark">M</span><span>MARVEL <b>ARCHIVE</b></span></a><nav><a href="#catalogo">Catálogo</a><a href="#universos">Universos</a><a href="#acerca">Acerca del archivo</a></nav><span class="edition">FAN ARCHIVE</span></header>
+<main>
+<section class="hero">
+  <div class="hero-glow"></div><div class="hero-copy"><p class="eyebrow">UN ARCHIVO DEL MULTIVERSO</p><h1>TODO MARVEL.<br><em>EN UN SOLO LUGAR.</em></h1><p class="hero-text">Películas, series y animación. Cada universo en su propio lugar. Explorá el catálogo y encontrá tu próxima historia.</p><a class="primary" href="#catalogo">EXPLORAR CATÁLOGO <span>↘</span></a></div>
+  <div class="hero-art"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="hero-m">M</div><div class="hero-caption">MULTIVERSE<br><b>DATABASE</b></div></div>
+  <div class="hero-bottom"><span>PELÍCULAS</span><i></i><span>SERIES</span><i></i><span>ANIMACIÓN</span><i></i><span>REALIDADES ALTERNATIVAS</span></div>
+</section>
+<section id="universos" class="universe-strip"><div><p class="eyebrow">NAVEGÁ POR REALIDAD</p><h2>UNIVERSOS</h2></div><div id="universeButtons" class="universe-buttons"></div></section>
+<section id="catalogo" class="catalog-section">
+ <div class="section-heading"><div><p class="eyebrow">LA BASE DE DATOS</p><h2>CATÁLOGO <span id="count"></span></h2></div><p class="muted">Buscá por título, personaje, año o universo.</p></div>
+ <div class="filters"><label class="searchbox"><span>⌕</span><input id="search" type="search" placeholder="Buscar en todo Marvel..." autocomplete="off"></label><select id="typeFilter"><option value="">Todos los formatos</option><option>Película</option><option>Serie</option><option>Miniserie</option><option>Animación</option><option>Serie animada</option><option>Especiales animados</option><option>Animación LEGO</option><option>Anime</option></select><select id="yearFilter"><option value="">Todos los años</option></select><button id="clearFilters" class="clear">LIMPIAR FILTROS ×</button></div>
+ <div class="active-line"><span id="activeLabel">MOSTRANDO TODO EL ARCHIVO</span><span class="sort-label">ORDEN: A–Z</span></div>
+ <div id="cards" class="cards"></div><div id="empty" class="empty" hidden>No encontramos resultados. Probá con otro término.</div>
+</section>
+<section id="acerca" class="about"><div><p class="eyebrow">SOBRE ESTE PROYECTO</p><h2>UN MULTIVERSO.<br><em>MILES DE HISTORIAS.</em></h2></div><p>Marvel Archive es un proyecto de fans para organizar películas, series y animación de distintas continuidades. Las categorías separan universos y adaptaciones: compartir personajes no significa pertenecer a la misma continuidad.</p><p class="disclaimer">Proyecto no oficial, creado por fans. Marvel y sus personajes pertenecen a sus respectivos titulares. Este archivo no está afiliado ni respaldado por Marvel ni Disney.</p></section>
+</main>
+<footer><a class="brand" href="#"><span class="brand-mark">M</span><span>MARVEL <b>ARCHIVE</b></span></a><span>UN FAN ARCHIVE · HECHO PARA EXPLORAR</span><a href="#top">VOLVER ARRIBA ↑</a></footer>
+<div id="modal" class="modal" aria-hidden="true"><div class="modal-backdrop" data-close></div><article class="modal-card"><button class="modal-close" data-close aria-label="Cerrar">×</button><p id="modalUniverse" class="eyebrow"></p><h2 id="modalTitle"></h2><div class="modal-meta"><span id="modalYear"></span><span id="modalType"></span><span id="modalSeason"></span></div><p id="modalDescription"></p></article></div>
+<script src="script.js"></script>
+</body></html>
